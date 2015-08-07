@@ -5,15 +5,17 @@
 
 1. Download and install Virtual Box [5.0.0]: [link](https://www.virtualbox.org/wiki/Downloads)
 
-2. Download and install Vagrant [1.7.4]: [link](https://www.vagrantup.com/downloads.html)
+2. Install Virtual Box Guest Additions : `vagrant plugin install vagrant-vbguest`
 
-3. Clone this repository: `git clone https://github.com/ebu/cpa-tutorial.git`
+3. Download and install Vagrant [1.7.4]: [link](https://www.vagrantup.com/downloads.html)
 
-4. Execute: `vagrant up` (take up to ~15min)
+4. Clone this repository: `git clone https://github.com/ebu/cpa-tutorial.git`
 
-5. Log into the virtual machine: `vagrant ssh`
+5. Execute: `vagrant up` (take up to ~15min)
 
-6. Check that host files are correctly shared in `ls /vagrant`
+6. Log into the virtual machine: `vagrant ssh`
+
+7. Check that host files are correctly shared in `ls /vagrant`
 
 
 ## Development
