@@ -13,6 +13,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     tutorial.vm.provision "shell", path: "docker/docker_restart.sh", run: "always", privileged: true
     tutorial.ssh.insert_key = false
     tutorial.vm.network "forwarded_port", guest: 9000, host: 9000
+    tutorial.vm.network "forwarded_port", guest: 8000, host: 8000
+    tutorial.vm.network "forwarded_port", guest: 8001, host: 8001
+    tutorial.vm.network "forwarded_port", guest: 8002, host: 8002
 
     tutorial.vm.provider "virtualbox" do |v|
       v.name = "cpa-tutorial"

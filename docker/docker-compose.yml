@@ -1,10 +1,39 @@
 jupyter:
-  image: jupyter/notebook
+  image: ebutech/jupyter-ijavascript
   ports:
     - "9000:9000"
   expose:
     - "9000"
   volumes:
     - tutorial:/opt/notebooks/tutorial
-  command: ipython notebook --port 9000 --ip=0.0.0.0 --no-browser --notebook-dir=/opt/notebooks
+  command: ijs --NotebookApp.port=9000 --no-browser --notebook-dir=/opt/notebooks --ip=* --debug
+  links:
+    - authprovider:ap
+    - serviceprovider:sp
+
+authprovider:
+  image: ebutech/cpa-auth-provider:latest
+  environment:
+    CPA_GITHUB_CLIENT_ID: <ID>
+    CPA_GITHUB_CLIENT_SECRET: <SECRET>
+    CPA_CLIENT_URL: http://localhost:9000/device
+    PORT: 8001
+  ports:
+    - "8001:8001"
+  expose:
+    - "8001"
+
+serviceprovider:
+  image: ebutech/cpa-service-provider:latest
+  environment:
+    CPA_AUTH_PROVIDER_URL: http://ap:8001
+    CPA_SERVICE_PROVIDER_DOMAIN: localhost:8002
+    PORT: 8002
+  ports:
+    - "8002:8002"
+  expose:
+    - "8002"
+  links:
+    - authprovider:ap
+
 
