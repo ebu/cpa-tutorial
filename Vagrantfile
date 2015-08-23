@@ -10,7 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "cpa-tutorial", primary: true do |tutorial|
     tutorial.vm.box = "http://output.ebu.io/vm/docker-base.box"
-    tutorial.vm.provision "shell", path: "docker/docker_restart.sh", run: "always", privileged: true
+    tutorial.vm.provision "shell", path: "docker/init/docker_restart.sh", run: "always", privileged: true
     tutorial.ssh.insert_key = false
     tutorial.vm.network "forwarded_port", guest: 9000, host: 9000
     tutorial.vm.network "forwarded_port", guest: 8000, host: 8000
