@@ -11,9 +11,9 @@
 
 4. Clone this repository: `git clone https://github.com/ebu/cpa-tutorial.git`
 
-5. Execute: `vagrant up` (take up to ~15min)
+5. Execute: `vagrant up cpa-tutorial`
 
-6. Log into the virtual machine: `vagrant ssh`
+6. Log into the virtual machine: `vagrant ssh` (password: `vagrant`)
 
 7. Check that host files are correctly shared in `ls /vagrant`
 
