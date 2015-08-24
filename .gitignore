@@ -1,6 +1,3 @@
 .vagrant
 *.box
 docker/tutorial/node_modules
-docker/github_credentials.yml
-
-docker/github_credentials.yml
