@@ -21,32 +21,23 @@ module.exports = function(self)
    * Restart a container which has been started with `serviceName` label.
    * @param _this context
    * @param serviceName
-   * @param done Callback function
    */
-  var reloadContainer = function(_this, serviceName, done) {
+  var reloadContainer = function(_this, serviceName) {
     var customConsole = getConsole(_this);
 
+    console.log('Restarting ', serviceName);
     // Reload Container
-    var exec = require('child_process').exec;
-    exec('docker-compose up -d ' + serviceName,
+    var spawn = require('child_process').spawn;
+    var s = spawn('docker-compose', ['restart', serviceName],
       {
-        'cwd': '/opt/docker'
-      },
-      function (error, stdout, stderr) {
-        if (!stderr.indexOf("Recreating " + serviceName)) {
-          customConsole.log("[OK]    Successfuly restarted the Authentication Provider");
-          return;
-        }
-
-        customConsole.log("[skip]  " + stdout + stderr);
-        if (error !== null) {
-          customConsole.log('[?]  exec error: ' + error);
-          throw Error("Error while reloading the container: ", error)
-        }
-      });
+        'cwd': '/opt/docker',
+        'detached': true,
+        'stdio': ['ignore', 'ignore', 'ignore']
+      }).unref();
   }
 
   var prototype = {
+
     /**
      * Set Github credentials in the Authorization Provider and restart the docker container.
      *
@@ -61,7 +52,6 @@ module.exports = function(self)
      * @param clientId: Client ID of the github developer application
      * @param clientSecret: Client Secret of the github developer application
      */
-
     setGithubCredentials: function (clientId, clientSecret, self) {
       // Custom console to print information in the browser.
       var _this = this;
@@ -77,19 +67,15 @@ module.exports = function(self)
         }
 
         customConsole.log("[OK]    Configuration saved.");
-        customConsole.log("[OK]    Restarting services with new configuration.");
+        customConsole.log("....    Restarting the Authorization provider with new configuration.");
 
         reloadContainer(_this, "authprovider", function() {
           customConsole.log("[OK]    Authorization Provider restarted.");
           customConsole.log("===>    Go to part 1");
-          reloadContainer(_this, "", function() {
-            customConsole.log("[OK]    Everything restarted.");
-          });
         });
 
       });
     },
-
 
     get: function (url) {
       var customConsole = getConsole(this);
