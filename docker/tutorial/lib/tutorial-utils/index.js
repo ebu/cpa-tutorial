@@ -94,14 +94,20 @@ module.exports = function(self)
       var customConsole = getConsole(this);
       var request = require('request');
 
-      var options = {
+      var requestOptions = {
         url:    url,
         method: 'POST',
         body:   data,
         json:   true
       };
 
-      request(options, function (error, response, body) {
+      if (options.token) {
+        requestOptions.headers = {
+          "WWW-Authenticate": "Bearer " + options.token;
+        };
+      }
+
+      request(requestOptions, function (error, response, body) {
         if (error) {
           customConsole.warn(error);
           return;
