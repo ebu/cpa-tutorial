@@ -73,7 +73,6 @@ module.exports = function(self)
           customConsole.log("[OK]    Authorization Provider restarted.");
           customConsole.log("===>    Go to part 1");
         });
-
       });
     },
 
@@ -91,17 +90,26 @@ module.exports = function(self)
         });
     },
 
-    post: function (url) {
+    post: function (url, data, options) {
       var customConsole = getConsole(this);
       var request = require('request');
-      request
-        .post(url)
-        .on('response', function (response, content) {
-          customConsole.log({ 'statusCode': response.statusCode });
-        })
-        .on('error', function (error) {
+
+      var options = {
+        url:    url,
+        method: 'POST',
+        body:   data,
+        json:   true
+      };
+
+      request(options, function (error, response, body) {
+        if (error) {
           customConsole.warn(error);
-        });
+          return;
+        }
+
+        customConsole.log('Status: ' + response.statusCode);
+        customConsole.log('\n' + JSON.stringify(body, null, '  '));
+      });
     }
   }
 
