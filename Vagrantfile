@@ -8,6 +8,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.username = 'vagrant'
   config.ssh.password = 'vagrant'
 
+
+  # Box provisioned INCLUDING CPA docker images
+  # (simple download of the image INCLUDING CPA docker images and restart of services)
   config.vm.define "cpa-tutorial", primary: true do |tutorial|
     tutorial.vm.box = "http://output.ebu.io/vm/cpa-tutorial.box"
     tutorial.vm.provision "shell", path: "docker/init/docker_restart.sh", run: "always", privileged: true
@@ -24,6 +27,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  # Box WITHOUT CPA docker images
+  # (simple download of a plain docker installation WITHOUT CPA docker images and restart of services)
   config.vm.define "cpa-tutorial-dev" do |tutorial|
     tutorial.vm.box = "http://output.ebu.io/vm/docker-base.box"
     tutorial.vm.provision "shell", path: "docker/init/docker_restart.sh", run: "always", privileged: true
@@ -40,6 +45,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  # Simple Ubuntu image and provision docker installation
   config.vm.define "docker-base", autostart: false do |base|
     base.vm.box = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
     base.vm.provision "shell", path: "base/vagrant_provision.sh"
