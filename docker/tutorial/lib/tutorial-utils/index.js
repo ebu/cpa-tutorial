@@ -1,5 +1,8 @@
 "use strict";
 
+var request = require('request'),
+    http    = require('http');
+
 module.exports = function(self)
 {
   /**
@@ -15,7 +18,7 @@ module.exports = function(self)
       throw Error("Invalid usage: Method must be called using explicitely the context \"this\" . \"this.setGithubCredentials(...)\"")
     }
     return _this.getGlobal().console;
-  }
+  };
 
   /**
    * Restart a container which has been started with `serviceName` label.
@@ -34,7 +37,39 @@ module.exports = function(self)
         'detached': true,
         'stdio': ['ignore', 'ignore', 'ignore']
       }).unref();
-  }
+  };
+
+  var formatHeaderName = function(header) {
+    return header.replace(/\b[A-Za-z0-9_]+/g, function(match) {
+      if (match === 'www') {
+        return match.toUpperCase();
+      }
+      else {
+        return match.charAt(0).toUpperCase() + match.substr(1);
+      }
+    });
+  };
+
+  var headersToDiscard = {
+    'x-powered-by': true,
+    'set-cookie':   true
+  };
+
+  var logResponse = function(dest, response, body) {
+    var status = http.STATUS_CODES[response.statusCode];
+
+    dest.log(response.statusCode + ' ' + status);
+
+    for (var header in response.headers) {
+      if (!headersToDiscard[header]) {
+        dest.log(formatHeaderName(header) + ': ' + response.headers[header]);
+      }
+    }
+
+    if (body) {
+      dest.log('\n' + JSON.stringify(body, null, '  '));
+    }
+  };
 
   var prototype = {
 
@@ -78,12 +113,11 @@ module.exports = function(self)
 
     get: function (url) {
       var customConsole = getConsole(this);
-      var request = require('request');
 
       request
         .get(url)
         .on('response', function (response) {
-          customConsole.log(response.statusCode);
+          logResponse(customConsole, response);
         })
         .on('error', function (error) {
           customConsole.warn(error);
@@ -92,18 +126,25 @@ module.exports = function(self)
 
     post: function (url, data, options) {
       var customConsole = getConsole(this);
-      var request = require('request');
+
+      options = options || {};
 
       var requestOptions = {
         url:    url,
-        method: 'POST',
-        body:   data,
-        json:   true
+        method: 'POST'
       };
+
+      if (options.form) {
+        requestOptions.form = data;
+      }
+      else {
+        requestOptions.body = data;
+        requestOptions.json = true;
+      }
 
       if (options.token) {
         requestOptions.headers = {
-          "WWW-Authenticate": "Bearer " + options.token;
+          'WWW-Authenticate': 'Bearer ' + options.token
         };
       }
 
@@ -113,8 +154,7 @@ module.exports = function(self)
           return;
         }
 
-        customConsole.log('Status: ' + response.statusCode);
-        customConsole.log('\n' + JSON.stringify(body, null, '  '));
+        logResponse(customConsole, response, body);
       });
     }
   }
