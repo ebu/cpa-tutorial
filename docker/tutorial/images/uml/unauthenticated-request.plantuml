@@ -1,0 +1,12 @@
+@startuml
+
+participant "Client"
+participant "SP"
+participant "AP"
+
+Client -> SP: POST /radiodns/tag/1/tag
+SP -> AP: POST /authorized
+SP <-- AP: 404 Not Found
+Client <-- SP: 401 Unauthorized
+
+@enduml

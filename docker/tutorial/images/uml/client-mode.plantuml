@@ -1,0 +1,15 @@
+@startuml
+
+participant "Client"
+participant "SP"
+participant "AP"
+
+Client -> AP: POST /register
+Client <-- AP: 201 Created
+
+|||
+
+Client -> AP: POST /token
+Client <-- AP: 200 OK
+
+@enduml
