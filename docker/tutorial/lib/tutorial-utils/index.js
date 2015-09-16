@@ -1,10 +1,11 @@
-"use strict";
+'use strict';
 
-var request = require('request'),
-    http    = require('http');
+var fs      = require('fs');
+var http    = require('http');
+var request = require('request');
 
-module.exports = function(self)
-{
+module.exports = function(self) {
+
   /**
    * Check that the function is called with the right context
    * and return the console, which returns the log output to
@@ -13,9 +14,10 @@ module.exports = function(self)
    * @param _this context which provides the console
    * @returns {Console} console object
    */
+
   var getConsole = function(_this) {
     if (! _this) {
-      throw Error("Invalid usage: Method must be called using explicitely the context \"this\" . \"this.setGithubCredentials(...)\"")
+      throw Error('Invalid usage: Method must be called using the explicit context "this". "this.setGithubCredentials(...)"');
     }
     return _this.getGlobal().console;
   };
@@ -25,6 +27,7 @@ module.exports = function(self)
    * @param _this context
    * @param serviceName
    */
+
   var reloadContainer = function(_this, serviceName) {
     var customConsole = getConsole(_this);
 
@@ -50,63 +53,107 @@ module.exports = function(self)
     });
   };
 
+  var logJson = function(dest, data, prefix) {
+    var json  = JSON.stringify(data, null, '  ');
+    var lines = json.split('\n');
+
+    dest.log(prefix);
+
+    lines.forEach(function(line) {
+      dest.log(prefix + line);
+    });
+  };
+
   var headersToDiscard = {
     'x-powered-by': true,
     'set-cookie':   true
   };
 
-  var logResponse = function(dest, response, body) {
-    var status = http.STATUS_CODES[response.statusCode];
+  var logRequestOrResponse = function(dest, type, data) {
+    var prefix = type === 'request' ? '>> ' : '<< ';
 
-    dest.log(response.statusCode + ' ' + status);
+    switch (type) {
+      case 'request':
+        dest.log(prefix + data.method + ' ' + data.uri + ' HTTP/1.1');
+        break;
 
-    for (var header in response.headers) {
+      case 'response':
+        dest.log(prefix + data.statusCode + ' ' + http.STATUS_CODES[data.statusCode]);
+        break;
+
+      default:
+        dest.warn('Request type: ' + type + ' not handled');
+        break;
+    }
+
+    for (var header in data.headers) {
       if (!headersToDiscard[header]) {
-        dest.log(formatHeaderName(header) + ': ' + response.headers[header]);
+        dest.log(prefix + formatHeaderName(header) + ': ' + data.headers[header]);
       }
     }
 
-    if (body) {
-      dest.log('\n' + JSON.stringify(body, null, '  '));
+    if (data.body) {
+      if (data.body instanceof Object) {
+        logJson(dest, data.body, prefix);
+      }
+      else {
+        try {
+          var data = JSON.parse(data.body);
+          logJson(dest, data, prefix);
+        }
+        catch (SyntaxError) {
+          dest.log(prefix + '\n' + prefix + data.body);
+        }
+      }
     }
+
+    dest.log('\n');
   };
 
   var prototype = {
 
     /**
-     * Set Github credentials in the Authorization Provider and restart the docker container.
+     * Set Github credentials in the Authorization Provider and restart the
+     * docker container.
      *
-     * To generate credentials, please go to : https://github.com/settings/applications/new
+     * To generate credentials, please go to:
+     * https://github.com/settings/applications/new
      *
      * For this tutorial, use the following parameters:
-     *    - Application name : EBU CPA tutorial
-     *    - Homepage URL: localhost:8001
-     *    - Application description: EBU CPA tutorial
-     *    - Authorization callback URL: http://localhost:8001/auth/github/callback
+     *  - Application name : EBU CPA tutorial
+     *  - Homepage URL: localhost:8001
+     *  - Application description: EBU CPA tutorial
+     *  - Authorization callback URL: http://localhost:8001/auth/github/callback
      *
-     * @param clientId: Client ID of the github developer application
-     * @param clientSecret: Client Secret of the github developer application
+     * @param clientId: Client ID of the GitHub developer application
+     * @param clientSecret: Client Secret of the GitHub developer application
      */
+
     setGithubCredentials: function (clientId, clientSecret, self) {
       // Custom console to print information in the browser.
       var _this = this;
       var customConsole = getConsole(_this);
 
       // Write the new configuration file
-      var fs = require('fs');
-      var content = "# This file was automatically generated \nauthprovider:\n  environment:  \n    CPA_GITHUB_CLIENT_ID: " + clientId + " \n    CPA_GITHUB_CLIENT_SECRET: " + clientSecret;
+      var content = [
+        '# This file was automatically generated',
+        'authprovider:',
+        '  environment:',
+        '    CPA_GITHUB_CLIENT_ID: ' + clientId,
+        '    CPA_GITHUB_CLIENT_SECRET: ' + clientSecret
+      ].join('\n');
 
-      fs.writeFile("/opt/docker/github_credentials.yml", content, function (err) {
+      fs.writeFile('/opt/docker/github_credentials.yml', content, function (err) {
         if (err) {
           return customConsole.log(err);
         }
 
-        customConsole.log("[OK]    Configuration saved.");
-        customConsole.log("....    Restarting the Authorization provider with new configuration.");
+        customConsole.log('[OK]    Configuration saved.');
+        customConsole.log('....    Restarting the Authorization provider with new configuration.');
 
-        reloadContainer(_this, "authprovider", function() {
-          customConsole.log("[OK]    Authorization Provider restarted.");
-          customConsole.log("===>    Go to part 1");
+        reloadContainer(_this, 'authprovider', function() {
+          customConsole.log('[OK]    Authorization Provider restarted.');
+          customConsole.log('===>    Go to part 1');
         });
       });
     },
@@ -117,7 +164,7 @@ module.exports = function(self)
       request
         .get(url)
         .on('response', function (response) {
-          logResponse(customConsole, response);
+          // logResponse(customConsole, response);
         })
         .on('error', function (error) {
           customConsole.warn(error);
@@ -153,8 +200,6 @@ module.exports = function(self)
           customConsole.warn(error);
           return;
         }
-
-        logResponse(customConsole, response, body);
       });
     }
   }
@@ -163,6 +208,12 @@ module.exports = function(self)
   self.get =                  prototype.get;
   self.post =                 prototype.post;
 
-  var message = "[OK]    Tutorial utilities successfully loaded.";
+  require('request-debug')(request, function(type, data, r) {
+    var dest = self.getGlobal().console;
+
+    logRequestOrResponse(dest, type, data);
+  });
+
+  var message = '[OK]    Tutorial utilities successfully loaded.';
   return self.getGlobal().console.log(message);
 };

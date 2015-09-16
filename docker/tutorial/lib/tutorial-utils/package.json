@@ -14,5 +14,8 @@
   "license": "BSD-3",
   "bugs": {
     "url": "https://github.com/ebu/cpa-tutorial/issues"
+  },
+  "dependencies": {
+    "request-debug": "^0.2.0"
   }
 }
