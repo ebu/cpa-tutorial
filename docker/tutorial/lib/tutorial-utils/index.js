@@ -191,7 +191,7 @@ module.exports = function(self) {
 
       if (options.token) {
         requestOptions.headers = {
-          'WWW-Authenticate': 'Bearer ' + options.token
+          'Authorization': 'Bearer ' + options.token
         };
       }
 
