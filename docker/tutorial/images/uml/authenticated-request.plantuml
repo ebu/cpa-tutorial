@@ -1,8 +1,8 @@
 @startuml
 
 participant "Client"
-participant "SP"
-participant "AP"
+participant "Service Provider" as SP
+participant "Authorization Provider" as AP
 
 Client -> SP: POST /radiodns/tag/1/tag
 SP -> AP: POST /authorized
