@@ -57,10 +57,10 @@ module.exports = function(self) {
     var json  = JSON.stringify(data, null, '  ');
     var lines = json.split('\n');
 
-    dest.log(prefix);
+    dest.log('');
 
     lines.forEach(function(line) {
-      dest.log(prefix + line);
+      dest.log(line);
     });
   };
 
@@ -70,15 +70,15 @@ module.exports = function(self) {
   };
 
   var logRequestOrResponse = function(dest, type, data) {
-    var prefix = type === 'request' ? '>> ' : '<< ';
-
     switch (type) {
       case 'request':
-        dest.log(prefix + data.method + ' ' + data.uri + ' HTTP/1.1');
+        dest.log('//////// Request: ////////\n');
+        dest.log(data.method + ' ' + data.uri + ' HTTP/1.1');
         break;
 
       case 'response':
-        dest.log(prefix + data.statusCode + ' ' + http.STATUS_CODES[data.statusCode]);
+        dest.log('//////// Response: ////////\n');
+        dest.log(data.statusCode + ' ' + http.STATUS_CODES[data.statusCode]);
         break;
 
       default:
@@ -88,21 +88,21 @@ module.exports = function(self) {
 
     for (var header in data.headers) {
       if (!headersToDiscard[header]) {
-        dest.log(prefix + formatHeaderName(header) + ': ' + data.headers[header]);
+        dest.log(formatHeaderName(header) + ': ' + data.headers[header]);
       }
     }
 
     if (data.body) {
       if (data.body instanceof Object) {
-        logJson(dest, data.body, prefix);
+        logJson(dest, data.body);
       }
       else {
         try {
           var data = JSON.parse(data.body);
-          logJson(dest, data, prefix);
+          logJson(dest, data);
         }
         catch (SyntaxError) {
-          dest.log(prefix + '\n' + prefix + data.body);
+          dest.log(data.body);
         }
       }
     }
