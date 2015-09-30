@@ -13,6 +13,7 @@ jupyter:
   links:
     - authprovider:ap
     - serviceprovider:sp
+    - client:client
   restart: always
 
 
@@ -44,4 +45,15 @@ serviceprovider:
   links:
     - authprovider:ap
 
-
+client:
+  image: ebutech/cpa-client:latest
+  environment:
+    CPA_SERVICE_ID: Channel 1
+    CPA_SERVICE_PROVIDER_DOMAIN: sp:8002
+  ports:
+    - "8000:8000"
+  expose:
+    - "8000"
+  links:
+    - authprovider:ap
+    - serviceprovider:sp
