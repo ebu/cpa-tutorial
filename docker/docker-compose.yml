@@ -49,6 +49,7 @@ serviceprovider:
 client:
   image: ebutech/cpa-client:latest
   environment:
+    CPA_SERVICE_PROVIDER_NAME: Example Service Provider
     CPA_SERVICE_ID: Channel 1
     CPA_SERVICE_PROVIDER_DOMAIN: sp:8002
   ports:
