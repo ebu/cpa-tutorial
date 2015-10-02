@@ -23,8 +23,8 @@ authprovider:
     file: github_credentials.yml
     service: authprovider
   environment:
-    CPA_CLIENT_URL: <TODO>
     CPA_SERVICE_PROVIDER_DOMAIN: sp:8002
+    CPA_CLIENT_URL: http://localhost:8000
     PORT: 8001
   ports:
     - "8001:8001"
@@ -38,6 +38,7 @@ serviceprovider:
   environment:
     CPA_AUTH_PROVIDER_URL: http://ap:8001
     CPA_SERVICE_PROVIDER_DOMAIN: sp:8002
+    CPA_CLIENT_URL: http://localhost:8000
     PORT: 8002
   ports:
     - "8002:8002"
@@ -45,6 +46,7 @@ serviceprovider:
     - "8002"
   links:
     - authprovider:ap
+
 
 client:
   image: ebutech/cpa-client:latest
