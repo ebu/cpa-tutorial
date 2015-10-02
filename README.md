@@ -1,5 +1,5 @@
 # Cross-Platform Authentication Tutorial
-
+This repository contains the material for the EBU [DevCon 2015 workshop](https://tech.ebu.ch/devcon15).
 
 ## Setup
 
