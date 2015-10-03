@@ -24,6 +24,7 @@ authprovider:
     service: authprovider
   environment:
     CPA_SERVICE_PROVIDER_DOMAIN: sp:8002
+    CPA_VERIFICATION_URL: http://localhost:8001/verify
     CPA_CLIENT_URL: http://localhost:8000
     PORT: 8001
   ports:
