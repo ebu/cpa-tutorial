@@ -1,10 +1,6 @@
 #!/bin/sh
 
-
-if [ ! -e "/etc/init/cpa-tutorial.conf" ]
-then
-  cp /vagrant/docker/init/cpa-tutorial.conf /etc/init/cpa-tutorial.conf
-fi
+cp /vagrant/docker/init/cpa-tutorial.conf /etc/init/cpa-tutorial.conf
 
 initctl reload-configuration
 start cpa-tutorial
