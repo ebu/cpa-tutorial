@@ -24,8 +24,9 @@ module.exports = function(self) {
 
   /**
    * Restart a container which has been started with `serviceName` label.
+   *
    * @param _this context
-   * @param serviceName
+   * @param {string} serviceName The name of the service to restart
    */
 
   var reloadContainer = function(_this, serviceName) {
@@ -72,12 +73,12 @@ module.exports = function(self) {
   var logRequestOrResponse = function(dest, type, data) {
     switch (type) {
       case 'request':
-        dest.log('//////// Request: ////////\n');
+        dest.log('//////// Request ////////\n');
         dest.log(data.method + ' ' + data.uri + ' HTTP/1.1');
         break;
 
       case 'response':
-        dest.log('//////// Response: ////////\n');
+        dest.log('//////// Response ////////\n');
         dest.log(data.statusCode + ' ' + http.STATUS_CODES[data.statusCode]);
         break;
 
@@ -125,8 +126,9 @@ module.exports = function(self) {
      *  - Application description: EBU CPA tutorial
      *  - Authorization callback URL: http://localhost:8001/auth/github/callback
      *
-     * @param clientId: Client ID of the GitHub developer application
-     * @param clientSecret: Client Secret of the GitHub developer application
+     * @param {string} clientId Client ID of the GitHub developer application
+     * @param {string} clientSecret Client Secret of the GitHub developer
+     *   application
      */
 
     setGithubCredentials: function (clientId, clientSecret, self) {
