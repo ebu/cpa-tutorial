@@ -8,7 +8,6 @@ jupyter:
     - ./tutorial:/opt/notebooks/tutorial          # Notebooks
     - /var/run/docker.sock:/var/run/docker.sock   # Used to restart the AP
     - .:/opt/docker                               # Used to write /opt/docker/github_credentials.yml
-
   command: sh -c 'ipython notebook --profile=default --NotebookApp.port=9000 --no-browser --notebook-dir=/opt/notebooks --ip=* --debug'
   links:
     - authprovider:ap
@@ -18,14 +17,15 @@ jupyter:
 
 authprovider:
   image: ebutech/cpa-auth-provider:latest
-  extends:
-    file: github_credentials.yml
-    service: authprovider
   environment:
     CPA_SERVICE_PROVIDER_DOMAIN: sp:8002
     CPA_VERIFICATION_URL: http://localhost:8001/verify
     CPA_CLIENT_URL: http://localhost:8000
+    CPA_GITHUB_CLIENT_ID: SEE_TUTORIAL
+    CPA_GITHUB_CLIENT_SECRET: SEE_TUTORIAL
     PORT: 8001
+  volumes:
+    - ./config.ap.js:/src/config.local.js # Used to propagate github credentials
   ports:
     - "8001:8001"
   expose:

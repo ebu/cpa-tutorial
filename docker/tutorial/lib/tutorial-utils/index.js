@@ -29,18 +29,21 @@ module.exports = function(self) {
    * @param {string} serviceName The name of the service to restart
    */
 
-  var reloadContainer = function(_this, serviceName) {
+  var reloadContainer = function(_this, serviceName, done) {
     var customConsole = getConsole(_this);
 
     console.log('Restarting ', serviceName);
     // Reload Container
     var spawn = require('child_process').spawn;
-    var s = spawn('docker-compose', ['up', '-d', serviceName],
+    var cmd = spawn('docker-compose', ['restart', serviceName],
       {
         'cwd': '/opt/docker',
         'detached': true,
         'stdio': ['ignore', 'ignore', 'ignore']
-      }).unref();
+      });
+
+    cmd.on('close', done);
+
   };
 
   var formatHeaderName = function(header) {
@@ -136,26 +139,29 @@ module.exports = function(self) {
       var _this = this;
       var customConsole = getConsole(_this);
 
-      // Write the new configuration file
-      var content = [
-        '# This file was automatically generated',
-        'authprovider:',
-        '  environment:',
-        '    CPA_GITHUB_CLIENT_ID: ' + clientId,
-        '    CPA_GITHUB_CLIENT_SECRET: ' + clientSecret
-      ].join('\n');
-
-      fs.writeFile('/opt/docker/github_credentials.yml', content, function (err) {
+      fs.readFile('/opt/docker/config.ap.js', 'utf8', function (err,data) {
         if (err) {
           return customConsole.log(err);
         }
 
-        customConsole.log('[OK]    Configuration saved.');
-        customConsole.log('....    Restarting the Authorization provider with new configuration.');
+        var content = data.replace(/client\_id:\s*(\w|\.|"|<|>)+/g, 'client_id: "' + clientId + '"');
+        content = content.replace(/client\_secret:\s*(\w|\.|"|<|>)+/g, 'client_secret: "' + clientSecret + '"');
 
-        reloadContainer(_this, 'authprovider', function() {
-          customConsole.log('[OK]    Authorization Provider restarted.');
-          customConsole.log('===>    Go to part 1');
+        fs.writeFile('/opt/docker/config.ap.js', content, function (err) {
+          if (err) {
+            return customConsole.log(err);
+          }
+
+          customConsole.log('[OK]    Configuration saved.');
+          customConsole.log('....    Restarting the Authorization provider with new configuration.');
+
+          reloadContainer(_this, 'authprovider', function (exit_code) {
+            if (exit_code != 0) {
+              customConsole.warn('[Error] Not able to correctly restart the Authorization Provider. Ask for help.');
+              return;
+            }
+            customConsole.log('[OK]    Authorization Provider restarted.');
+          });
         });
       });
     },
