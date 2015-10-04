@@ -35,7 +35,7 @@ module.exports = function(self) {
     console.log('Restarting ', serviceName);
     // Reload Container
     var spawn = require('child_process').spawn;
-    var s = spawn('docker-compose', ['restart', serviceName],
+    var s = spawn('docker-compose', ['up', '-d', serviceName],
       {
         'cwd': '/opt/docker',
         'detached': true,
