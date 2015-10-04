@@ -18,10 +18,7 @@ Please note that the virtual machine image is about 3GB in size.
 
 5. Execute: `vagrant up cpa-tutorial`
 
-6. Log into the virtual machine: `vagrant ssh` (password: `vagrant`)
-
-7. Check that host files are correctly shared in `ls /vagrant`
-
+6. Open a browser and go to : [http://localhost:9000](http://localhost:9000)
 
 ## Development
 
