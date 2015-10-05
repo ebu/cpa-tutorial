@@ -21,9 +21,10 @@ Please note that the virtual machine image is about 3GB in size. Completing the 
 
 6. Install the cpa-tutorial virtual machine image: `vagrant up cpa-tutorial`
 
-7. Open a browser and go to : [http://localhost:9000](http://localhost:9000)
+7. Open a browser and go to: [http://localhost:9000](http://localhost:9000)
 
 8. When you have finished with the tutorial, shut down the virtual machine: `vagrant halt cpa-tutorial`
+
 
 ## Normal usage
 
@@ -31,9 +32,10 @@ Please note that the virtual machine image is about 3GB in size. Completing the 
 
 2. Start the virtual machine: `vagrant up cpa-tutorial`
 
-2. Open a browser and go to : [http://localhost:9000](http://localhost:9000)
+3. Open a browser and go to: [http://localhost:9000](http://localhost:9000)
 
-3. Shut down the virtual machine: `vagrant halt cpa-tutorial`
+4. Shut down the virtual machine: `vagrant halt cpa-tutorial`
+
 
 ## Uninstall
 
