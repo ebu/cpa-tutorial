@@ -17,7 +17,7 @@ Please note that the virtual machine image is about 3GB in size. Completing the 
 
 4. Clone this repository: `git clone https://github.com/ebu/cpa-tutorial.git`
 
-5. <a name="setup-5">Change into the cpa-tutorial directory: `cd cpa-tutorial`
+5. <a name="setup-5"></a>Change into the cpa-tutorial directory: `cd cpa-tutorial`
 
 6. Install the cpa-tutorial virtual machine image: `vagrant up cpa-tutorial`
 
