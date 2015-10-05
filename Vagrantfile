@@ -13,6 +13,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # (simple download of the image INCLUDING CPA docker images and restart of services)
   config.vm.define "cpa-tutorial", primary: true do |tutorial|
     tutorial.vm.box = "http://output.ebu.io/vm/cpa-tutorial.box"
+    # fix 'stdin is not a tty' error
+    config.vm.provision "fix-no-tty", type: "shell" do |s|
+      s.privileged = false
+      s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+    end
     tutorial.vm.provision "shell", path: "docker/init/docker_restart.sh", run: "always", privileged: true
     tutorial.ssh.insert_key = false
     tutorial.vm.network "forwarded_port", guest: 9000, host: 9000
@@ -31,6 +36,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # (simple download of a plain docker installation WITHOUT CPA docker images and restart of services)
   config.vm.define "cpa-tutorial-dev" do |tutorial|
     tutorial.vm.box = "http://output.ebu.io/vm/docker-base.box"
+    # fix 'stdin is not a tty' error
+    config.vm.provision "fix-no-tty", type: "shell" do |s|
+      s.privileged = false
+      s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+    end
     tutorial.vm.provision "shell", path: "docker/init/docker_restart.sh", run: "always", privileged: true
     tutorial.ssh.insert_key = false
     tutorial.vm.network "forwarded_port", guest: 9000, host: 9000
