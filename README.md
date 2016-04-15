@@ -1,7 +1,7 @@
 # Cross-Platform Authentication Tutorial
 
 This repository contains the material for the EBU [DevCon 2015 workshop](https://tech.ebu.ch/devcon15) on 
-the Cross-Platform Authentication Protocol ([ETSI TS 103 407](https://portal.etsi.org/webapp/WorkProgram/Report_WorkItem.asp?WKI_ID=47970).
+the Cross-Platform Authentication Protocol ([ETSI TS 103 407](https://portal.etsi.org/webapp/WorkProgram/Report_WorkItem.asp?WKI_ID=47970)).
 
 It provides the means to set up a fully self-contained virtual machine image containing the reference implementation of CPA (the [Authorization Provider](https://github.com/ebu/cpa-auth-provider), [Service Provider](https://github.com/ebu/cpa-service-provider), and [Client](https://github.com/ebu/cpa-client)) together with an interactive tutorial using [Jupyter](http://jupyter.org).
 
